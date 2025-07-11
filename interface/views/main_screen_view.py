@@ -1,5 +1,6 @@
 import flet as ft
-
+from utils.formatters import format_ip
+from utils.formatters import format_port
 ######### OPENGL ISSUES ON HP PAVILLION ########
 import os
 os.environ["LIBGL_ALWAYS_SOFTWARE"] = "1"
@@ -40,8 +41,10 @@ def show_main_screen(page: ft.Page, navigation_callbacks):
     def select_mode(e):
         if e.control.value == "Servidor":
            current_callback_key.current = "show_server_screen"
+           text_servidor.disabled=True
         if e.control.value == "Cliente":
             current_callback_key.current = "show_chat_screen"
+            text_servidor.disabled = False
         page.update()
 
     def change_theme_mode(e):
@@ -68,20 +71,30 @@ def show_main_screen(page: ft.Page, navigation_callbacks):
         if not field_nome.value or not field_porta.value or not field_servidor.value:
             alert_dialog = ft.AlertDialog(title=ft.Text("Preencha todos os campos antes de continuar"))
             alert_dialog.open = True
+            page.update()
+            return False
         else:
             navigation_callbacks[current_callback_key.current]()
-        page.update()
+            page.update()
+            return True
 
-        # pra eu poder checar se os campos estão preenchidos ou nao, tenho que assocuá-los a variáveis, como abaixo
 
-        #nome_field = ft.TextField(label="Nome")
-        #email_field = ft.TextField(label="Email")
+    def iniciar_click(e):
+        #essa funçao vai ser respons'avel por chamar a funçao de checar se os campos est~ao preenchidos e chamar a proxima janela, seja ela a de servidor ou a de cliente
 
         return
 
-
     def exit_click(e):
         page.window.close()
+
+    def ip_mask():
+        # Atualiza o valor do campo sem interferir na digitação
+        field_servidor.value = format_ip(field_servidor.value)
+        field_servidor.update()
+
+    def port_mask():
+        nip.value = format_nip(nip.value)
+        nip.update()
 
     page.appbar = ft.AppBar(
         #leading=ft.Icon(ft.Icons.ANCHOR),
@@ -93,9 +106,9 @@ def show_main_screen(page: ft.Page, navigation_callbacks):
     text_nome = ft.Text("Nome: ", size=18)
     field_nome = ft.TextField(width=180)
     text_servidor = ft.Text("Servidor:", size=18)
-    field_servidor = ft.TextField(width=180)
+    field_servidor = ft.TextField(width=180, on_change=lambda e: ip_mask())
     text_porta = ft.Text("Porta:", size=18)
-    field_porta = ft.TextField(width=180)
+    field_porta = ft.TextField(width=180, on_change=lambda e: port_mask())
     text_modo = ft.Text("Modo:", size=18)
     dropdown_modo = ft.Dropdown(width=150, value="Cliente", options=[
         ft.dropdown.Option("Servidor"),
@@ -108,7 +121,7 @@ def show_main_screen(page: ft.Page, navigation_callbacks):
         ], on_change=change_theme_mode)
     text_notificacoes = ft.Text("Notificações:", size=18)
     checkbox_notificacoes = ft.Checkbox(value = True, on_change=notification_option)
-    button_iniciar = ft.ElevatedButton("Iniciar", icon="EXIT_TO_APP", on_click=check_fields)
+    button_iniciar = ft.ElevatedButton("Iniciar", icon="EXIT_TO_APP", on_click=iniciar_click)
     button_sair = ft.ElevatedButton("Exit", icon="EXIT_TO_APP", on_click=exit_click)
 
     # Montagem dos componentes na tela

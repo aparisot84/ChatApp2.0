@@ -1,8 +1,8 @@
 import flet as ft
 
 ######### OPENGL ISSUES ON HP PAVILLION ########
-import os
-os.environ["LIBGL_ALWAYS_SOFTWARE"] = "1"
+#import os
+#os.environ["LIBGL_ALWAYS_SOFTWARE"] = "1"
 
 
 ############# IMPORTAÇÃO DA VIEWS #############
